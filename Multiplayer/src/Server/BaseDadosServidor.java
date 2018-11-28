@@ -116,36 +116,39 @@ public class BaseDadosServidor
         u.getSender().enviarMsg(abandonoDePartida);        
     }
 
-    public void criarJogo(String idMeu, String idInimigo)
+    public synchronized void criarJogo(String idMeu, String idInimigo)
     {
-        Usuario_model usuario = buscarUser(idMeu);
-        Usuario_model inimigo = buscarUser(idInimigo);
-        Jogo_model jogo = new Jogo_model(idsJogos, usuario, inimigo);
-        jogos.add(jogo);
-        
-        //enviar dados do inimigo para o usuario
-        ArrayList dadosInimigo = new ArrayList<>();
-        dadosInimigo.add("comecar_jogo");
-        dadosInimigo.add(idsJogos);
-        dadosInimigo.add("X");
-        dadosInimigo.add(inimigo.getId());
-        dadosInimigo.add(inimigo.getNome());
-        dadosInimigo.add(inimigo.getTrofeus());
-        usuario.getSender().enviarMsg(dadosInimigo);
-        
-        //enviar dados do usuario para o inimigo
-        ArrayList dadosUsuario = new ArrayList<>();
-        dadosUsuario.add("comecar_jogo");
-        dadosUsuario.add(idsJogos);
-        dadosUsuario.add("O");
-        dadosUsuario.add(usuario.getId());
-        dadosUsuario.add(usuario.getNome());
-        dadosUsuario.add(usuario.getTrofeus());
-        inimigo.getSender().enviarMsg(dadosUsuario);
-        
-        idsJogos++;
-        
-        this.enviarListaUsuarios("");
+        if(!verificaSeEstaJogando(idInimigo))
+        {        
+            Usuario_model usuario = buscarUser(idMeu);
+            Usuario_model inimigo = buscarUser(idInimigo);
+            Jogo_model jogo = new Jogo_model(idsJogos, usuario, inimigo);
+            jogos.add(jogo);
+
+            //enviar dados do inimigo para o usuario
+            ArrayList dadosInimigo = new ArrayList<>();
+            dadosInimigo.add("comecar_jogo");
+            dadosInimigo.add(idsJogos);
+            dadosInimigo.add("X");
+            dadosInimigo.add(inimigo.getId());
+            dadosInimigo.add(inimigo.getNome());
+            dadosInimigo.add(inimigo.getTrofeus());
+            usuario.getSender().enviarMsg(dadosInimigo);
+
+            //enviar dados do usuario para o inimigo
+            ArrayList dadosUsuario = new ArrayList<>();
+            dadosUsuario.add("comecar_jogo");
+            dadosUsuario.add(idsJogos);
+            dadosUsuario.add("O");
+            dadosUsuario.add(usuario.getId());
+            dadosUsuario.add(usuario.getNome());
+            dadosUsuario.add(usuario.getTrofeus());
+            inimigo.getSender().enviarMsg(dadosUsuario);
+
+            idsJogos++;
+
+            this.enviarListaUsuarios("");
+        }
     }
 
     private boolean verificaSeEstaJogando(String id)

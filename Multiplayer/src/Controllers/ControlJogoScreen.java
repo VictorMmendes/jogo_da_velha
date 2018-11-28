@@ -78,8 +78,14 @@ public class ControlJogoScreen implements MouseListener
                         deQuemEaVez = false;
 
                         int tag;
-                        if(minhaPeca.equals("X")) tag = 1;
-                        else tag = 2;                        
+                        if(minhaPeca.equals("X"))
+                        {
+                            tag = 1;
+                            jogo.getTurn().setText("Turn: O");
+                        } else {
+                            tag = 2;
+                            jogo.getTurn().setText("Turn: X");
+                        }                        
                         pecas[i] = tag;
                         
                         ctrl.marcarPosicao(gameId, user.getId(), minhaPeca, i);
@@ -116,7 +122,9 @@ public class ControlJogoScreen implements MouseListener
             }
 
             jogo.getQuadrados()[i].setText(peca);
-        }        
+        }
+
+        jogo.getTurn().setText("Turn: " + minhaPeca);
         
         verificaSeEuPerdi();
         deQuemEaVez = true;
